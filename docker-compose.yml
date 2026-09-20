@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: easyhl7-dev-postgres
+    environment:
+      POSTGRES_USER: dbt
+      POSTGRES_PASSWORD: dbt
+      POSTGRES_DB: easyhl7
+    ports:
+      - "5432:5432"
+    volumes:
+      - easyhl7_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  easyhl7_postgres_data:
