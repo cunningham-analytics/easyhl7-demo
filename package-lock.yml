@@ -1,0 +1,4 @@
+packages:
+  - local: ../easyhl7
+    name: easyhl7
+sha1_hash: 1ef894e362d19b28acbddb69b37ed134cb95a96c

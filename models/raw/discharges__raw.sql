@@ -1,0 +1,1 @@
+{{ get_raw_model(source('source_data', 'discharges')) }}

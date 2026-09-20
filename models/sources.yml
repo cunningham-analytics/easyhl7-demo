@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: source_data
+    schema: source_data
+    tables:
+      - name: lab_results
+
+      - name: vitals
+
+      - name: discharges
+
+      - name: coding
