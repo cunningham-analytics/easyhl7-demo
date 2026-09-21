@@ -1,0 +1,95 @@
+{{ config(
+    materialized='view'
+) }}
+
+with patient_result as (
+
+    select *
+    from {{ ref('lab_results__oru_r01__patient_result__v2_5_1') }}
+
+),
+
+patient as (
+
+    select *
+    from {{ ref('lab_results__oru_r01__patient__v2_5_1') }}
+
+),
+
+visit as (
+
+    select *
+    from {{ ref('lab_results__oru_r01__visit__v2_5_1') }}
+
+),
+
+order_observation as (
+
+    select *
+    from {{ ref('lab_results__oru_r01__order_observation__v2_5_1') }}
+
+),
+
+observation as (
+
+    select *
+    from {{ ref('lab_results__oru_r01__observation__v2_5_1') }}
+
+),
+
+final as (
+
+    select
+        patient_result.msg_control_id,
+        patient_result.patient_result_seq,
+
+        patient_result.loaded_at,
+        patient_result.dbt_loaded_at,
+        patient_result.dbt_batch_id,
+
+        patient.patient_seq,
+        patient.pid,
+        patient.pd1,
+        patient.nk1,
+        patient.nte as patient_nte,
+
+        visit.visit_seq,
+        visit.pv1,
+        visit.pv2,
+
+        order_observation.order_observation_seq,
+        order_observation.orc,
+        order_observation.obr,
+        order_observation.nte as order_observation_nte,
+
+        observation.observation_seq,
+        observation.obx,
+        observation.nte as observation_nte
+
+    from patient_result
+
+    left join patient
+        on patient.msg_control_id = patient_result.msg_control_id
+        and patient.patient_result_seq = patient_result.patient_result_seq
+
+    left join visit
+        on visit.msg_control_id = patient.msg_control_id
+        and visit.patient_result_seq = patient.patient_result_seq
+        and visit.patient_seq = patient.patient_seq
+
+    left join order_observation
+        on order_observation.msg_control_id = patient_result.msg_control_id
+        and order_observation.patient_result_seq =
+            patient_result.patient_result_seq
+
+    left join observation
+        on observation.msg_control_id = order_observation.msg_control_id
+        and observation.patient_result_seq =
+            order_observation.patient_result_seq
+        and observation.order_observation_seq =
+            order_observation.order_observation_seq
+
+)
+
+select *
+from final
